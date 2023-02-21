@@ -1,5 +1,3 @@
-import 'package:bibleproject_greek/types/Video.dart';
-
 class Poster {
   String id;
   String title;
