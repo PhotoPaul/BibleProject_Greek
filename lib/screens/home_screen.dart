@@ -1,6 +1,7 @@
 import 'package:bibleproject_greek/screens/playlists_screen.dart';
 import 'package:bibleproject_greek/screens/posters_screen.dart';
 import 'package:bibleproject_greek/screens/reading_plans_screen.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -13,6 +14,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   DateTime _lastPop;
   int _selectedIndex = 0;
 
@@ -28,9 +30,16 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  _fbmInit() async {
+    var token = await _firebaseMessaging.getToken();
+    print(token);
+    // _fbm.requestPermission();
+  }
+
   @override
   initState() {
     super.initState();
+    _fbmInit();
   }
 
   @override
@@ -63,6 +72,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(_pages[_selectedIndex]["title"]))),
+            InkWell(
+              child: Icon(Icons.notifications),
+              onTap: () {
+                // _firebaseInit();
+              },
+            ),
+            SizedBox(
+              width: 10,
+            ),
             InkWell(
               child: FaIcon(
                 FontAwesomeIcons.youtube,
