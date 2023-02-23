@@ -1,12 +1,15 @@
+import 'package:bibleproject_greek/configuration.dart';
 import 'package:bibleproject_greek/screens/playlists_screen.dart';
 import 'package:bibleproject_greek/screens/posters_screen.dart';
 import 'package:bibleproject_greek/screens/reading_plans_screen.dart';
+import 'package:bibleproject_greek/screens/video.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -31,9 +34,16 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   _fbmInit() async {
+    _firebaseMessaging.getNotificationSettings().then((settings) {
+      if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+        // print(settings.authorizationStatus);
+      } else if (settings.authorizationStatus == AuthorizationStatus.denied) {
+        _firebaseMessaging.requestPermission();
+      }
+    });
     var token = await _firebaseMessaging.getToken();
-    print(token);
-    // _fbm.requestPermission();
+    var url = Uri.parse(API_URL + "?action=refreshDeviceToken&token=" + token);
+    http.get(url);
   }
 
   @override
@@ -63,6 +73,35 @@ class _HomeScreenState extends State<HomeScreen> {
       return Future.value(true);
     }
 
+    // This is used to handle remote messages that arrive while the app is terminated
+    _firebaseMessaging.getInitialMessage().then((RemoteMessage message) {
+      if (message != null) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => VideoScreen(message.data["videoId"])),
+        );
+      }
+    });
+
+    // This is used to handle remote messages that arrive while the app is on the background
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => VideoScreen(message.data["videoId"])),
+      );
+    });
+
+    // This is used to handle remote messages that arrive while the app is on the foreground
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => VideoScreen(message.data["videoId"])),
+      );
+    });
+
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
@@ -72,15 +111,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(_pages[_selectedIndex]["title"]))),
-            InkWell(
-              child: Icon(Icons.notifications),
-              onTap: () {
-                // _firebaseInit();
-              },
-            ),
-            SizedBox(
-              width: 10,
-            ),
+            // InkWell(
+            //   child: Icon(Icons.notifications),
+            //   onTap: () {
+            //     // _firebaseInit();
+            //   },
+            // ),
+            // SizedBox(
+            //   width: 10,
+            // ),
             InkWell(
               child: FaIcon(
                 FontAwesomeIcons.youtube,
