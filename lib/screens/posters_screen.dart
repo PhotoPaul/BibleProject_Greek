@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'widgets/poster_widget.dart';
+import '../configuration.dart';
 
 class PackagesScreen extends StatefulWidget {
   @override
@@ -19,8 +20,7 @@ class _PackagesScreenState extends State<PackagesScreen> {
     List _fetchedPackagelists = [];
 
     http.Response response;
-    var url = Uri.parse(
-        "https://script.google.com/macros/s/AKfycbyJZ6kmlG2qmiuO2ctoyz2Qr4uvnSgCUSIiKHBFN_yoYNm3lfm_Aowi--D7mAY65Td5/exec");
+    var url = Uri.parse(API_URL + "?action=getPosters");
     try {
       response = await http.get(url);
       _fetchedPackagelists = jsonDecode(response.body);
