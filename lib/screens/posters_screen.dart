@@ -88,20 +88,24 @@ class _PackagesScreenState extends State<PackagesScreen> {
         child: ListView.builder(
             itemCount: _packagelists.length,
             itemBuilder: (BuildContext context, int i) {
-              return Column(
-                children: [
-                  Text(_packagelists[i]["title"]),
-                  ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      physics: const ScrollPhysics(),
-                      itemCount: _packagelists[i]["videos"].length,
-                      itemBuilder: (BuildContext context, int j) {
-                        return PosterWidget(
-                            data: _packagelists[i]["videos"][j]);
-                      })
-                ],
-              );
+              if (_packagelists[i]["videos"][0]["poster"] != null)
+                return Column(
+                  children: [
+                    Text(_packagelists[i]["title"]),
+                    ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        physics: const ScrollPhysics(),
+                        itemCount: _packagelists[i]["videos"].length,
+                        itemBuilder: (BuildContext context, int j) {
+                          if (_packagelists[i]["videos"][j]["poster"] != null)
+                            return PosterWidget(
+                                data: _packagelists[i]["videos"][j]);
+                          return null;
+                        })
+                  ],
+                );
+              return null;
             }),
       ),
     );

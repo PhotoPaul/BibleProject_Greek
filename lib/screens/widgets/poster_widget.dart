@@ -18,7 +18,7 @@ class PosterWidget extends StatelessWidget {
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                data["title"],
+                data["title"].replaceAll("&amp;", "&"),
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
