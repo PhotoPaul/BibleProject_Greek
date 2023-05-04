@@ -36,6 +36,11 @@ class _PlaylistsScreenState extends State<PlaylistsScreen> {
             thumbnail: _playlistsJSON[i]["snippet"]["thumbnails"]["maxres"]
                 ["url"]));
       }
+      // Swap the first two items in the list
+      if (_fetchedPlaylists.length >= 2) {
+        _fetchedPlaylists
+            .replaceRange(0, 2, [_fetchedPlaylists[1], _fetchedPlaylists[0]]);
+      }
       return _fetchedPlaylists;
     } on http.ClientException catch (_) {
       // print("browser offline");
